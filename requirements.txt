@@ -1,0 +1,9 @@
+flask
+beautifulsoup4
+lxml
+requests
+geopy
+waitress
+# Idealista: ativado por defeito (ENABLE_IDEALISTA=1). Necessita Playwright + Chromium.
+# Em servidores gratuitos (Render 512MB) desativa com ENABLE_IDEALISTA=0 para ser mais rápido.
+playwright
