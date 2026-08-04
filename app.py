@@ -1778,6 +1778,12 @@ def api_faculdades():
     return jsonify({"cidade": cidade, "faculdades": FACULDADES.get(cidade, [])})
 
 
+@app.route("/health")
+def health():
+    """Health check leve (sem scraping) para plataformas como o Render."""
+    return jsonify({"status": "ok", "app": "Aloja-Te", "cidades": len(CIDADES_TODAS)})
+
+
 def _prewarm():
     """Pré-aquecimento em background para a primeira visita ser rápida (o primeiro
     scraping de cada cidade demora vários segundos)."""
