@@ -1407,6 +1407,8 @@ HTML_TEMPLATE = """<!doctype html>
   .brand-casa{color:#ffd166;font-weight:800;}
   .stats-bar{background:#fff;border:1px solid #e9e8fb;border-radius:.75rem;font-size:.85rem;color:var(--texto);box-shadow:var(--sombra);}
   .filter-card{background:#fff;border:none;box-shadow:var(--sombra);border-radius:1rem;}
+  .filtro-grupo{font-weight:700;font-size:.72rem;color:var(--primario);text-transform:uppercase;letter-spacing:.5px;margin:1rem 0 .4rem;}
+  .filtro-grupo:first-child{margin-top:0;}
   .slider-val{font-weight:700;color:var(--primario);}
   .card-ad{border:none;box-shadow:var(--sombra);border-radius:1rem;transition:transform .18s ease,box-shadow .18s ease;overflow:hidden;}
   .card-ad:hover{transform:translateY(-4px);box-shadow:var(--sombra-hover);}
@@ -1436,10 +1438,10 @@ HTML_TEMPLATE = """<!doctype html>
 </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark navbar-unicasa mb-3">
-  <div class="container">
-    <a class="navbar-brand fw-bold fs-4" href="{{ url_for('index') }}">Aloja<span class="brand-casa">-Te</span></a>
-    <span class="navbar-text text-white d-none d-md-inline" style="font-size:1rem;font-weight:500;opacity:.95;border-left:2px solid rgba(255,255,255,.4);padding-left:.75rem;">Encontra quarto sem complicações</span>
+<nav class="navbar navbar-dark navbar-unicasa mb-3">
+  <div class="container d-flex flex-column flex-sm-row align-items-center justify-content-center gap-1 py-1">
+    <a class="navbar-brand fw-bold fs-4 mb-0" href="{{ url_for('index') }}">Aloja<span class="brand-casa">-Te</span></a>
+    <span class="navbar-text text-white text-center" style="font-size:.9rem;font-weight:500;opacity:.95;">Encontra quarto sem complicações</span>
   </div>
 </nav>
 
@@ -1451,7 +1453,7 @@ HTML_TEMPLATE = """<!doctype html>
   </div>
 
   {% if alerta %}
-  <div class="alert {{ alerta.classe }} d-flex justify-content-between align-items-center py-2">
+  <div class="alert {{ alerta.classe }} d-flex flex-wrap justify-content-between align-items-center gap-2 py-2">
     <span>{{ alerta.texto }}</span>
     <a href="{{ alerta.link }}" class="fw-bold text-decoration-underline">{{ alerta.acao }}</a>
   </div>
@@ -1461,8 +1463,9 @@ HTML_TEMPLATE = """<!doctype html>
   <div class="card filter-card mb-4">
     <div class="card-body">
       <form method="get" action="{{ url_for('index') }}" id="filtros">
+        <div class="filtro-grupo">1 · Localização</div>
         <div class="row g-3">
-          <div class="col-md-4">
+          <div class="col-12 col-md-4">
             <label class="form-label small" for="cidade">Cidade</label>
             <select id="cidade" name="cidade" class="form-select form-select-sm">
               {% for c in cidades %}<option value="{{ c }}" {% if c == cidade %}selected{% endif %}>{{ c }}</option>{% endfor %}
@@ -1470,7 +1473,7 @@ HTML_TEMPLATE = """<!doctype html>
               {% for c in cidades_extra %}<option value="{{ c }}" {% if c == cidade %}selected{% endif %}>{{ c }}</option>{% endfor %}
             </select>
           </div>
-          <div class="col-md-8">
+          <div class="col-12 col-md-8">
             <label class="form-label small" for="faculdade">Faculdade (para distância)</label>
             <select id="faculdade" name="faculdade" class="form-select form-select-sm">
               <option value="">— Todas / sem referência —</option>
@@ -1482,27 +1485,21 @@ HTML_TEMPLATE = """<!doctype html>
             </select>
           </div>
         </div>
-        <div class="row g-3 mt-0">
-          <div class="col-md-2">
+        <div class="filtro-grupo">2 · Preço, distância e ordenação</div>
+        <div class="row g-3">
+          <div class="col-6 col-md-2">
             <label class="form-label small" for="preco_min">Preço mín (€)</label>
             <input type="number" id="preco_min" name="preco_min" class="form-control form-control-sm" min="0" step="10" value="{{ preco_min or '' }}">
           </div>
-          <div class="col-md-2">
+          <div class="col-6 col-md-2">
             <label class="form-label small" for="preco_max">Preço máx (€)</label>
             <input type="number" id="preco_max" name="preco_max" class="form-control form-control-sm" min="0" step="10" value="{{ preco_max or '' }}">
           </div>
-          <div class="col-md-2">
+          <div class="col-12 col-md-3">
             <label class="form-label small" for="dist_max">Dist. máx à faculdade (km, linha reta)</label>
             <input type="number" id="dist_max" name="dist_max" class="form-control form-control-sm" min="0" step="0.1" value="{{ dist_max or '' }}">
           </div>
-          <div class="col-md-3">
-            <label class="form-label small" for="paginas">Profundidade de pesquisa</label>
-            <select id="paginas" name="paginas" class="form-select form-select-sm">
-              <option value="2" {% if paginas == 2 %}selected{% endif %}>Padrão (2 páginas)</option>
-              <option value="5" {% if paginas == 5 %}selected{% endif %}>Aprofundado (5 páginas)</option>
-            </select>
-          </div>
-          <div class="col-md-3">
+          <div class="col-12 col-md-5">
             <label class="form-label small" for="ordenar">Ordenar por</label>
             <select id="ordenar" name="ordenar" class="form-select form-select-sm">
               <option value="" {% if not ordenar %}selected{% endif %}>Mais recentes</option>
@@ -1515,27 +1512,41 @@ HTML_TEMPLATE = """<!doctype html>
             </select>
           </div>
         </div>
-        <div class="row g-3 mt-0 align-items-center">
-          <div class="col-md-3">
-            <label class="form-label small d-flex justify-content-between">
-              <span>Segurança mín.</span><span id="seg-val" class="slider-val">{{ seg_min or 0 }}</span>
-            </label>
-            <input type="range" id="seguranca_min" name="seg_min" class="form-range" min="0" max="10" step="1" value="{{ seg_min or 0 }}">
+        <div class="d-flex gap-2 flex-column flex-sm-row mt-3">
+          <button type="submit" class="btn btn-laranja btn-sm py-2 flex-fill">🔍 Filtrar</button>
+          <button type="button" id="btnMais" class="btn btn-outline-primary btn-sm" aria-expanded="false">⚙️ Mais filtros</button>
+        </div>
+        <div id="maisFiltros" style="display:none;">
+          <div class="filtro-grupo">3 · Zona</div>
+          <div class="row g-3 align-items-center">
+            <div class="col-12 col-md-4">
+              <label class="form-label small d-flex justify-content-between">
+                <span>Segurança mín.</span><span id="seg-val" class="slider-val">{{ seg_min or 0 }}</span>
+              </label>
+              <input type="range" id="seguranca_min" name="seg_min" class="form-range" min="0" max="10" step="1" value="{{ seg_min or 0 }}">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small d-flex justify-content-between" title="Quanto mais alto, menos ruído">
+                <span>Ruído mín.</span><span id="tra-val" class="slider-val">{{ tranquilo_min if tranquilo_min is not none else 0 }}</span>
+              </label>
+              <input type="range" id="tranquilo_min" name="tranquilo_min" class="form-range" min="0" max="10" step="1" value="{{ tranquilo_min if tranquilo_min is not none else 0 }}">
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label small d-flex justify-content-between">
+                <span>Comércio mín.</span><span id="com-val" class="slider-val">{{ com_min or 0 }}</span>
+              </label>
+              <input type="range" id="comercio_min" name="com_min" class="form-range" min="0" max="10" step="1" value="{{ com_min or 0 }}">
+            </div>
           </div>
-          <div class="col-md-3">
-            <label class="form-label small d-flex justify-content-between" title="Quanto mais alto, menos ruído">
-              <span>Ruído mín.</span><span id="tra-val" class="slider-val">{{ tranquilo_min if tranquilo_min is not none else 0 }}</span>
-            </label>
-            <input type="range" id="tranquilo_min" name="tranquilo_min" class="form-range" min="0" max="10" step="1" value="{{ tranquilo_min if tranquilo_min is not none else 0 }}">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label small d-flex justify-content-between">
-              <span>Comércio mín.</span><span id="com-val" class="slider-val">{{ com_min or 0 }}</span>
-            </label>
-            <input type="range" id="comercio_min" name="com_min" class="form-range" min="0" max="10" step="1" value="{{ com_min or 0 }}">
-          </div>
-          <div class="col-md-3 d-grid">
-            <button type="submit" class="btn btn-laranja btn-sm py-2">🔍 Filtrar</button>
+          <div class="filtro-grupo">4 · Profundidade de pesquisa</div>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <label class="form-label small" for="paginas">Páginas por fonte</label>
+              <select id="paginas" name="paginas" class="form-select form-select-sm">
+                <option value="2" {% if paginas == 2 %}selected{% endif %}>Padrão (2 páginas)</option>
+                <option value="5" {% if paginas == 5 %}selected{% endif %}>Aprofundado (5 páginas)</option>
+              </select>
+            </div>
           </div>
         </div>
       </form>
@@ -1644,6 +1655,16 @@ document.addEventListener('DOMContentLoaded', () => {
   facSel.addEventListener('change', () => form.submit());
 
   filtrarFaculdades();
+
+  // mostra/oculta os filtros avançados (zona + profundidade)
+  const btnMais = document.getElementById('btnMais');
+  const mais = document.getElementById('maisFiltros');
+  btnMais.addEventListener('click', () => {
+    const aberto = mais.style.display !== 'none';
+    mais.style.display = aberto ? 'none' : 'block';
+    btnMais.textContent = aberto ? '⚙️ Mais filtros' : '⚙️ Menos filtros';
+    btnMais.setAttribute('aria-expanded', String(!aberto));
+  });
 
   const bind = (id, saida) => {
     const el = document.getElementById(id);
